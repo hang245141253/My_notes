@@ -1,0 +1,94 @@
+安装openjdk 
+
+	sudo add-apt-repository ppa:openjdk-r/ppa
+	sudo apt-get update
+	sudo apt-get install openjdk-8-jdk
+
+安装Oraclejdk
+       [Oraclejdk官方下载地址](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
+然后将jdk-8u201-linux-x64.tar.gz复制过来
+
+	sudo cp jdk-8u201-linux-x64.tar.gz /usr/lib/jvm
+	cd /usr/lib/jvm
+	sudo tar -zxvf jdk-8u201-linux-x64.tar.gz
+
+配置环境变量：
+
+	sudo gedit ~/.bashrc  
+
+      #Openjdk-8
+      export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+      export JRE_HOME=${JAVA_HOME}/jre
+      export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib 
+      export PATH=${JAVA_HOME}/bin:$PATH
+
+      #Oraclejdk
+      export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_201
+      #export JRE_HOME=${JAVA_HOME}/jre
+      #export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+      #export PATH=.:${JAVA_HOME}/bin:$PATH
+      
+
+执行命令让环境变量生效：
+
+	source ~/.bashrc 
+ 
+这里有一个问题 如果环境变量配置至/etc/profile，使用sudo update-alternatives --config java不起作用，最好还是配置到~/.bashrc中。
+具体原因嘛。。。回头在研究一下。
+
+新增一组新的系统命令链接符：
+
+	sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk1.8.0_201/bin/java 300
+	sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/jdk1.8.0_201/bin/javac 300
+
+最后切换jdk：
+
+	sudo update-alternatives --config java
+	sudo update-alternatives --config javac
+
+验证一下：
+
+先查看下当前jdk版本
+
+	$ java -version
+	openjdk version "1.8.0_191"
+	OpenJDK Runtime Environment (build 1.8.0_191-8u191-b12-2ubuntu0.16.04.1-b12)
+	OpenJDK 64-Bit Server VM (build 25.191-b12, mixed mode)
+
+然后切换jdk
+
+	$ sudo update-alternatives --config java 
+	有 2 个候选项可用于替换 java (提供 /usr/bin/java)。
+	
+	  选择       路径                                          优先级  状态
+	------------------------------------------------------------
+	* 0            /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java   1081      自动模式
+	  1            /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java   1081      手动模式
+	  2            /usr/lib/jvm/jdk1.8.0_201/bin/java               300       手动模式
+
+	要维持当前值[*]请按<回车键>，或者键入选择的编号：2
+	update-alternatives: 使用 /usr/lib/jvm/jdk1.8.0_201/bin/java 来在手动模式中提供 /usr/bin/java (java)
+
+	$ sudo update-alternatives --config javac
+	有 2 个候选项可用于替换 javac (提供 /usr/bin/javac)。
+
+	  选择       路径                                       优先级  状态
+	------------------------------------------------------------
+	* 0            /usr/lib/jvm/java-8-openjdk-amd64/bin/javac   1081      自动模式
+	  1            /usr/lib/jvm/java-8-openjdk-amd64/bin/javac   1081      手动模式
+	  2            /usr/lib/jvm/jdk1.8.0_201/bin/javac           300       手动模式
+
+	要维持当前值[*]请按<回车键>，或者键入选择的编号：2
+	update-alternatives: 使用 /usr/lib/jvm/jdk1.8.0_201/bin/javac 来在手动模式中提供 /usr/bin/javac (javac)
+
+
+
+再查看一下：
+
+	$ java -version                          
+	java version "1.8.0_201"
+	Java(TM) SE Runtime Environment (build 1.8.0_201-b09)
+	Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
+
+此时已经切换完毕！
